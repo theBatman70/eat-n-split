@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Button from "./Button";
+import Button from "./utils/Button";
 
-export function SplitForm({ friend, onSplit }) {
+export default function SplitForm({ friend, onSplit }) {
   const [bill, setBill] = useState("");
   const [yourExp, setYourExp] = useState("");
   const friendExp = bill ? bill - yourExp : "";
@@ -18,7 +18,7 @@ export function SplitForm({ friend, onSplit }) {
         max={bill}
         onChange={(e) =>
           setYourExp(
-            Number(e.target.value) < bill ? Number(e.target.value) : yourExp
+            Number(e.target.value) <= bill ? Number(e.target.value) : yourExp
           )
         }
       />

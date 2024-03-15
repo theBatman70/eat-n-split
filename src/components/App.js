@@ -1,51 +1,65 @@
 import AddFriendForm from "./AddFriendForm";
 import "./../index.css";
-import { FriendsList } from "./FriendsList";
-import { SplitForm } from "./SplitForm";
+import FriendsList from "./FriendsList";
+import SplitForm from "./SplitForm";
 import { useState } from "react";
-import Button from "./Button";
+import Button from "./utils/Button";
+import { useLocalStorageState } from "./utils/useLocalStorageState";
 
 const initialData = [
   {
-    name: "Clark",
-    avatarUrl: "https://i.pravatar.cc/48",
+    id: 447477,
+    name: "Riley",
+    avatarUrl: "https://i.pravatar.cc/48?u=44747721",
     amountOwnedByYou: 0,
   },
   {
-    name: "Emma",
-    avatarUrl: "https://i.pravatar.cc/49",
+    id: 312254,
+    name: "Nahush",
+    avatarUrl: "https://i.pravatar.cc/48?u=31225423",
     amountOwnedByYou: 25,
   },
 ];
 
 export default function App() {
-  const [friends, setFriends] = useState(initialData);
+  const [friends, setFriends] = useLocalStorageState(initialData, "splitData");
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  let selectedFriend = friends[selectedIndex];
+  const [selectedId, setSelectedId] = useState(null);
+  const selectedFriend = friends.find((friend) => friend.id === selectedId);
   const addFriendButton = isAddOpen ? "Close" : "Add Friend";
+  console.log(selectedFriend);
 
   return (
     <div className="app">
-      <div className="sidebar">
+      <SideBar>
         <FriendsList
           friends={friends}
           onSelect={handleSelect}
-          selectedIndex={selectedIndex}
-        ></FriendsList>
+          selectedId={selectedId}
+        />
         {isAddOpen && (
           <AddFriendForm onToggle={handleToggleAdd} onAdd={handleAdd} />
         )}
         <Button onClick={handleToggleAdd}>{addFriendButton}</Button>
-      </div>
-      {selectedIndex !== null ? (
-        <SplitForm friend={selectedFriend} onSplit={handleSplit} />
-      ) : null}
+      </SideBar>
+      {selectedId && (
+        <SplitForm
+          key={selectedFriend.id}
+          friend={selectedFriend}
+          onSplit={handleSplit}
+        />
+      )}
     </div>
   );
 
-  function handleSelect(i) {
-    setSelectedIndex(i);
+  function SideBar({ children }) {
+    return <div className="sidebar">{children}</div>;
+  }
+
+  /* EVENT HANDLERS */
+
+  function handleSelect(id) {
+    setSelectedId(id);
   }
 
   function handleToggleAdd() {
@@ -53,9 +67,15 @@ export default function App() {
   }
 
   function handleAdd(name, imgUrl) {
+    const id = crypto.randomUUID();
     setFriends((f) => [
       ...f,
-      { name: name, avatarUrl: imgUrl, amountOwnedByYou: 0 },
+      {
+        id,
+        name,
+        avatarUrl: imgUrl + `?u=${id}`,
+        amountOwnedByYou: 0,
+      },
     ]);
   }
 
@@ -70,6 +90,6 @@ export default function App() {
           : ele
       )
     );
-    setSelectedIndex(null);
+    setSelectedId(null);
   }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "./Button";
+import Button from "./utils/Button";
 
 export default function AddFriendForm({ onToggle, onAdd }) {
   const [name, setName] = useState("");

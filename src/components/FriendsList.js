@@ -1,18 +1,23 @@
-import Button from "./Button";
+import Button from "./utils/Button";
 
-export function FriendsList({ friends, selectedIndex, onSelect, children }) {
+export default function FriendsList({
+  friends,
+  selectedId,
+  onSelect,
+  children,
+}) {
   return (
     <div>
       <ul className="friendList">
         {friends.map((friend, i) => (
           <Friend
+            key={friend.id}
             avatar={friend.avatarUrl}
             amountOwnedByYou={friend.amountOwnedByYou}
-            selectedIndex={selectedIndex}
+            selectedId={selectedId}
             onSelect={onSelect}
-            curIndex={i}
+            id={friend.id}
             name={friend.name}
-            key={i}
           ></Friend>
         ))}
       </ul>
@@ -21,15 +26,8 @@ export function FriendsList({ friends, selectedIndex, onSelect, children }) {
   );
 }
 
-function Friend({
-  avatar,
-  amountOwnedByYou,
-  selectedIndex,
-  onSelect,
-  curIndex,
-  name,
-}) {
-  const selected = selectedIndex === curIndex;
+function Friend({ avatar, amountOwnedByYou, selectedId, onSelect, id, name }) {
+  const selected = id === selectedId;
   const button = selected ? "Close" : "Select";
   const owesYou = amountOwnedByYou > 0;
   const youOwe = amountOwnedByYou < 0;
@@ -51,7 +49,7 @@ function Friend({
   );
 
   function handleToggleSelect() {
-    selected ? onSelect(null) : onSelect(curIndex);
+    selected ? onSelect(null) : onSelect(id);
   }
 
   function balance(name, amountOwnedByYou) {
